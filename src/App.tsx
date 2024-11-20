@@ -4,7 +4,7 @@ import { FoodCard } from "./components/FoodCard";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { SearchBar } from "./components/SearchBar";
-import {Ads} from "./components/Ads"
+import { Ads } from "./components/Ads";
 import { foodData } from "./data/foodData";
 import { foodDataType } from "./Types/types";
 import { Modal } from "./components/Modal";
@@ -139,10 +139,12 @@ function App() {
           }}
           onRemoveCartItem={onRemoveCartItem}
         />
-        
       </header>
       <main className="flex flex-col m-auto max-w-[1200px] px-4">
         <ImageCarousel images={images} />
+        <h1 className="text-center capitalize font-bold text-3xl my-8">
+          Start Ordering Now
+        </h1>
         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <Filter current={currentSelection} setCurrent={setCurrentSelection} />
         {isLoading && (
@@ -185,7 +187,7 @@ function App() {
           </>
         )}
       </main>
-      <Ads/>
+      <Ads />
       {isModalOpen && selectedFood && (
         <Modal
           id={selectedFood.id}
