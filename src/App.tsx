@@ -145,7 +145,7 @@ function App() {
         <h1 className="text-center capitalize font-bold text-3xl my-8">
           Start Ordering Now
         </h1>
-        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
         <Filter current={currentSelection} setCurrent={setCurrentSelection} />
         {isLoading && (
           <div className="flex flex-col gap-4 items-center justify-center my-8 min-h-[30vh]">
@@ -187,6 +187,9 @@ function App() {
           </>
         )}
       </main>
+      <h1 className="text-center capitalize font-bold text-3xl my-8">
+          Upcoming Deals
+        </h1>
       <Ads />
       {isModalOpen && selectedFood && (
         <Modal
