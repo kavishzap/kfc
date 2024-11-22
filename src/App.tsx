@@ -141,12 +141,12 @@ function App() {
         />
       </header>
       <main className="flex flex-col m-auto max-w-[1200px] px-4">
-        <ImageCarousel images={images} />
-        <h1 className="text-center capitalize font-bold text-3xl my-8">
+        {/* <ImageCarousel images={images} /> */}
+        {/* <h1 className="text-center capitalize font-bold text-3xl my-8">
           Start Ordering Now
-        </h1>
-        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
-        <Filter current={currentSelection} setCurrent={setCurrentSelection} />
+        </h1> */}
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <Filter current={currentSelection} setCurrent={setCurrentSelection}/>
         {isLoading && (
           <div className="flex flex-col gap-4 items-center justify-center my-8 min-h-[30vh]">
             <div className="custom-loader"></div>
@@ -157,9 +157,9 @@ function App() {
         )}
         {!isLoading && (
           <>
-            <h1 className="text-center capitalize font-bold text-3xl my-8">
+            {/* <h1 className="text-center capitalize font-bold text-3xl my-8">
               {currentSelection}
-            </h1>
+            </h1> */}
             {dataArray.length === 0 && (
               <div className="flex flex-col gap-4 items-center justify-center my-8 min-h-[30vh]">
                 <div className="text-center text-md">
@@ -167,7 +167,7 @@ function App() {
                 </div>
               </div>
             )}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4  mt-4">
               {dataArray.slice(0, maxDisplay).map((data) => (
                 <FoodCard
                   key={data.id}
@@ -187,10 +187,10 @@ function App() {
           </>
         )}
       </main>
-      <h1 className="text-center capitalize font-bold text-3xl my-8">
+      {/* <h1 className="text-center capitalize font-bold text-3xl my-8">
           Upcoming Deals
-        </h1>
-      <Ads />
+        </h1> */}
+      {/* <Ads /> */}
       {isModalOpen && selectedFood && (
         <Modal
           id={selectedFood.id}

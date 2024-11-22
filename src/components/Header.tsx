@@ -1,8 +1,9 @@
 import { useState } from "react";
-import kfc_logo from "../assets/kfc-4.svg";
+import kfc_logo from "../assets/_5C0DE2EC-2C9F-44EC-9667-61334C1CADE3_-removebg-preview.png";
 import { foodDataType } from "../Types/types";
 import { FaTimes } from "react-icons/fa";
 import QRCode from "react-qr-code";
+import Swal from "sweetalert2";
 
 type HeaderProps = {
   cartItems: (foodDataType & { quantity: number })[];
@@ -65,11 +66,13 @@ export const Header: React.FC<HeaderProps> = ({
           <img
             src={kfc_logo}
             alt="KFC Logo"
-            width={40}
+            width={80}
             className="object-contain"
           />
           <div>
-            <div className="font-bold text-lg sm:text-2xl">KFC</div>
+            <div className="font-bold text-lg sm:text-2xl">
+              Le Coin Mauricien
+            </div>
             <div className="font-light text-xs sm:text-sm uppercase tracking-wider">
               Menu Website
             </div>
@@ -199,39 +202,86 @@ export const Header: React.FC<HeaderProps> = ({
         <div
           id="checkout-modal"
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-          onClick={(e) => {
-            if ((e.target as Element).id === "checkout-modal") {
-              setIsCheckoutOpen(false);
-            }
-          }}
         >
-          <div className="relative bg-white shadow-lg p-6 w-[90%] max-w-sm rounded-lg text-center">
-            <button
-              onClick={toggleCheckout}
-              className="absolute top-2 right-2 text-gray-500 hover:text-black"
-            >
-              <FaTimes size={20} />
-            </button>
-            <img
-              src="food/image.png" // Replace with your QR code generation logic
-              alt="QR Code"
-              className="mx-auto mb-4 w-24 h-24" 
-            />
-            <h2 className="font-bold text-lg mb-4">
-              Please Show QR CODE at counter
+          <div className="relative bg-white shadow-lg p-6 w-[90%] max-w-sm rounded-lg text-center border border-dashed border-gray-300">
+            <h2 className="font-bold text-lg uppercase mb-4 border-b-4 border-dotted pb-2">
+              Receipt {refNumber}
             </h2>
+            <div className="flex flex-col items-center text-center mb-4">
+              <p className="text-sm">
+                Shop Name: <span>LE COIN MAURICIEN</span>
+              </p>
+              <p className="text-sm">
+                Address: <span>Mahebourg</span>
+              </p>
+              <p className="text-sm">Manager: James Smith</p>
+              <p className="text-sm">
+                Date: {new Date().toLocaleDateString("en-GB")}
+              </p>
+            </div>
 
-            <QRCode value={qrCodeData} size={150} className="mx-auto mb-4" />
+            <div className="border-b-4 border-dotted pb-2 mb-4">
+              <div className="flex justify-between">
+                <span>ITEM</span>
+                <span>PRICE</span>
+              </div>
+              {cartItems.map((item, index) => (
+                <div key={index} className="flex justify-between text-sm">
+                  <span>
+                    {item.name} (x{item.quantity})
+                  </span>
+                  <span>Rs {item.price.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
 
-            <p>
-              Ref Number: <span className="font-bold">{refNumber}</span>
+            <div className="mb-4">
+              <div className="flex justify-between">
+                <span>Subtotal:</span>
+                <span>Rs {subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between border-b-4 border-dotted pt-2">
+                <span>Total:</span>
+                <span>Rs {total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div className="text-left mb-4 text-sm items-center text-center">
+              <p>Tel: +230 5918 2520</p>
+            </div>
+
+            <QRCode value={qrCodeData} size={100} className="mx-auto mb-4" />
+
+            <p className="text-xs text-gray-600 ">THANK YOU FOR CHOOSING US!</p>
+            <p className="text-xs text-gray-500 border-b-4 border-dotted">
+              Your feedback keeps us improving!
             </p>
-
-            <hr className="my-2" />
-
-            <p>
-              Amount: <span className="font-bold">Rs {total.toFixed(2)}</span>
-            </p>
+            <div className="flex items-center justify-center mt-3">
+              <div className="flex gap-4">
+                <button
+                  className="bg-primary-color rounded-md text-white p-3"
+                  onClick={() => setIsCheckoutOpen(false)} // Close modal on Cancel
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-[#00ff00] rounded-md text-white p-3"
+                  onClick={() => {
+                    Swal.fire({
+                      title: "Receipt Printing",
+                      text: "Your receipt is being printed...",
+                      icon: "info",
+                      showConfirmButton: false,
+                      timer: 5000, // Auto-close after 2 seconds
+                    });
+                    setIsCheckoutOpen(false)
+                    //clear cart function
+                  }}
+                >
+                  Print
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

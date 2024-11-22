@@ -15,7 +15,7 @@ export const SearchBar: FC<PropsType> = ({ searchTerm, setSearchTerm }) => {
   };
 
   return (
-    <div className="py-10">
+    <div className="py-10 p-4">
       <form onSubmit={handleSubmit}>
         <input
           type="text"

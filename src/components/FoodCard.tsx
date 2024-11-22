@@ -34,7 +34,8 @@ export const FoodCard: FC<FoodCardProps> = ({
           setIsModal={setIsModal}
           price={price}
           onAddToCart={handleAddToCart} // Pass the defined function
-          category={""}        />
+          category={""}
+        />
       )}
       <div
         className="text-center shadow-md p-8 rounded-md group cursor-pointer hover:border-primary-color border border-white"
@@ -46,6 +47,9 @@ export const FoodCard: FC<FoodCardProps> = ({
           className="object-contain w-[200px] max-h-[200px] ml-12"
         />
         <h2 className="font-bold group-hover:text-primary-color">{name}</h2>
+        <button className="bg-primary-color rounded-md text-white p-1 mt-2">
+          Select
+        </button>
       </div>
     </>
   );
