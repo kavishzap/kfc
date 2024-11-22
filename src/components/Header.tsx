@@ -67,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className="py-4 px-4 border-b-8 border-primary-color relative">
+    <div className="py-4 px-4 border-b-8 border-primary-color relative" >
       <div className="flex justify-between items-center max-w-[1200px] m-auto">
         <div className="flex gap-4">
           <img

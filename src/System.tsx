@@ -9,7 +9,6 @@ import { foodDataType } from "./Types/types";
 import { Modal } from "./components/Modal";
 import Cart from "./components/Cart";
 
-
 type CartItemType = foodDataType & { quantity: number };
 
 function System() {
@@ -83,7 +82,12 @@ function System() {
   };
 
   return (
-    <>
+    <div
+      style={{
+        backgroundImage: "radial-gradient(circle, #000 -2px, transparent 2px)",
+        backgroundSize: "20px 20px", // Controls the spacing between dots
+      }}
+    >
       <header className="sticky top-0 z-50 bg-white shadow-md">
         <Header
           cartItems={cartItems}
@@ -138,7 +142,7 @@ function System() {
             {isButton && (
               <button
                 onClick={maxDisplayHandler}
-                className="bg-primary-color p-3 w-full md:max-w-[350px] mx-auto font-light mt-16 rounded-md text-white"
+                className="bg-primary-color p-3 mb-10 w-full md:max-w-[350px] mx-auto font-light mt-16 rounded-md text-white"
               >
                 Show more
               </button>
@@ -164,9 +168,9 @@ function System() {
         toggleCart={toggleCart}
       />{" "}
       <footer>
-        <Footer />
+        {/* <Footer /> */}
       </footer>
-    </>
+    </div>
   );
 }
 

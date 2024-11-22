@@ -38,7 +38,7 @@ export const FoodCard: FC<FoodCardProps> = ({
         />
       )}
       <div
-        className="text-center shadow-md p-8 rounded-md group cursor-pointer hover:border-primary-color border border-white"
+        className="text-center bg-white shadow-md p-8 rounded-md group cursor-pointer hover:border-primary-color border border-white"
         onClick={() => setIsModal(true)}
       >
         <img
