@@ -88,6 +88,11 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="flex items-center relative">
           <div onClick={toggleCart}>
+            {cartItems.length > 0 && (
+              <span className="absolute bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            )}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 cursor-pointer"
@@ -102,11 +107,6 @@ export const Header: React.FC<HeaderProps> = ({
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m-4 8h18a2 2 0 100-4H5a2 2 0 000 4z"
               />
             </svg>
-            {cartItems.length > 0 && (
-              <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                {cartItems.length}
-              </span>
-            )}
           </div>
 
           <div className="flex items-center relative ml-10" onClick={logout}>
