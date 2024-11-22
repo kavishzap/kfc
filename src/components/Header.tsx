@@ -4,6 +4,7 @@ import { foodDataType } from "../Types/types";
 import { FaTimes } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 type HeaderProps = {
   cartItems: (foodDataType & { quantity: number })[];
@@ -59,6 +60,12 @@ export const Header: React.FC<HeaderProps> = ({
 
   const refNumber = generateRefNumber();
 
+  const navigate = useNavigate();
+  // Navigation function
+  const logout = () => {
+    navigate("/"); // Replace "/dashboard" with your target route
+  };
+
   return (
     <div className="py-4 px-4 border-b-8 border-primary-color relative">
       <div className="flex justify-between items-center max-w-[1200px] m-auto">
@@ -79,26 +86,45 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center relative" onClick={toggleCart}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 cursor-pointer"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m-4 8h18a2 2 0 100-4H5a2 2 0 000 4z"
-            />
-          </svg>
-          {cartItems.length > 0 && (
-            <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-              {cartItems.length}
-            </span>
-          )}
+        <div className="flex items-center relative">
+          <div onClick={toggleCart}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 cursor-pointer"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m-4 8h18a2 2 0 100-4H5a2 2 0 000 4z"
+              />
+            </svg>
+            {cartItems.length > 0 && (
+              <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center relative ml-10" onClick={logout}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 cursor-pointer"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-6 0v-1m6-8v-1a3 3 0 00-6 0v1"
+              />
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -274,7 +300,7 @@ export const Header: React.FC<HeaderProps> = ({
                       showConfirmButton: false,
                       timer: 5000, // Auto-close after 2 seconds
                     });
-                    setIsCheckoutOpen(false)
+                    setIsCheckoutOpen(false);
                     //clear cart function
                   }}
                 >

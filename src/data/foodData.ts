@@ -1,124 +1,126 @@
 import { foodDataType } from "../Types/types";
-import hawaiianBurgerImage from "../assets/burger/burger1.png";
-import zingerMeal from "../assets/burger/burger2.png";
-import burger from "../assets/burger/burger3.png";
-import zinger from "../assets/burger/burger4.png";
-import Wrap1 from "../assets/burger/wrap1.png";
-import Wrap2 from "../assets/burger/wrap2.png";
+
+//image import
+import burger1 from "../assets/Food POS UI Design (Demo) (Community)/burger1.png";
+import burger2 from "../assets/Food POS UI Design (Demo) (Community)/burger2.png";
+import burger3 from "../assets/Food POS UI Design (Demo) (Community)/burger3.png";
+
+import wrap1 from "../assets/Food POS UI Design (Demo) (Community)/wrap1.png";
+import wrap2 from "../assets/Food POS UI Design (Demo) (Community)/wrap2.png";
+import wrap3 from "../assets/Food POS UI Design (Demo) (Community)/wrap3.png";
+
+import fries1 from "../assets/Food POS UI Design (Demo) (Community)/fries1.png";
+import fries2 from "../assets/Food POS UI Design (Demo) (Community)/fries2.png";
+import fries3 from "../assets/Food POS UI Design (Demo) (Community)/fries3.png";
+
+import drink1 from "../assets/Food POS UI Design (Demo) (Community)/drink1.png";
+import drink2 from "../assets/Food POS UI Design (Demo) (Community)/drink2.png";
+import drink3 from "../assets/Food POS UI Design (Demo) (Community)/drink3.png";
 
 export const foodData: foodDataType[] = [
   {
     id: 1,
-    name: "HAWAIIAN DOUBLE DOWN MEAL",
-    imageUrl: hawaiianBurgerImage,
+    name: "Classic Cheeseburger",
+    imageUrl: burger1,
     category: "burgers",
     description:
-      "Double chicken and double cheese with an added pineapple slice to provide you with our unique Hawaiian Double Down.",
+      "Juicy chicken patty topped with cheddar cheese, lettuce, and tomato.",
     price: 340,
   },
   {
     id: 2,
-    name: "ZINGER MEAL",
-    imageUrl: zingerMeal,
+    name: "Veggie Delight Burger",
+    imageUrl: burger2,
     category: "burgers",
     description:
-      "A whole chicken breast cooked with our unique recipe served in a soft sesame bun with lettuce and dressing.",
+      "Grilled plant-based patty with fresh veggies and a tangy sauce.",
     price: 280,
   },
   {
     id: 3,
-    name: "ZINGER",
-    imageUrl: zinger,
+    name: "Chicken Burger",
+    imageUrl: burger3,
     category: "burgers",
-    description:
-      "A juicy, spicy and crispy chicken fillet, topped with iceberg lettuce & delicious mayo, served in a soft sesame bun. Simply Irresistible!",
-    price: 195,
+    description: "Crispy fried chicken with mayo and pickles in a toasted bun.",
+    price: 340,
   },
-  
-  
+
   {
     id: 5,
-    name: "BOXMASTER MEAL",
-    imageUrl: Wrap1,
+    name: "Grilled Chicken Wrap",
+    imageUrl: wrap1,
     category: "wraps",
     description:
-      "A succulent crispy chicken fillet, a hash brown, lettuce, tomato cubes, mayo & cheese in a warm toasted tortilla. Full of Life, full of Taste!",
-    price: 325,
+      "Tender grilled chicken, lettuce, and creamy dressing in a soft tortilla.",
+    price: 250,
   },
   {
     id: 6,
-    name: "TWISTER MEAL",
-    imageUrl: Wrap2,
+    name: "Falafel Wrap",
+    imageUrl: wrap2,
     category: "wraps",
     description:
-      "A toasty delicate tortilla filled with crispy chicken, lettuce, tomatoes and mayo.",
-    price: 340,
+      "Crispy falafels, hummus, and fresh veggies wrapped in pita bread",
+    price: 250,
   },
   {
     id: 7,
-    name: "LARGE CUP (500ml)",
-    imageUrl:
-      "food/drink2.png",
+    name: "Berry Smoothie",
+    imageUrl: drink2,
     category: "drinks",
-    description:
-      "Cold cups of carbonated drinks to accompany your KFC meals.",
+    description: "A creamy blend of mixed berries and yogurt.",
     price: 75,
   },
   {
     id: 8,
-    name: "Water",
-    imageUrl:
-      "food/drink1.png",
+    name: "Lemon Iced Tea",
+    imageUrl: drink1,
     category: "drinks",
-    description: "Bottle of water (50cl)",
-    price: 50,
+    description: "Refreshing iced tea with a hint of lemon zest.",
+    price: 75,
   },
   {
     id: 9,
-    name: "Large Chips",
-    imageUrl: "food/fies1.png",
+    name: "Cheese Fries",
+    imageUrl: fries1,
     category: "fries & sides",
     description:
-      "Crispy, golden fries. Comes in 3 sizes: small, medium & large.",
-    price: 140,
+      "Fries loaded with melted cheddar cheese and a sprinkle of herbs.",
+    price: 125,
   },
   {
     id: 10,
-    name: "Popcorn Chicken",
-    imageUrl:
-      "food/fies2.png",
+    name: "Classic Fries",
+    imageUrl: fries2,
     category: "fries & sides",
     description:
-      "Pop non-stop with juicy Hot & Crispy chicken with extreme sprinkle.",
-    price: 175,
+      "Crispy golden potato fries, lightly salted for the perfect crunch.",
+    price: 125,
   },
 
   {
     id: 11,
-    name: "Crispy Strips",
-    imageUrl:
-      "food/fies3.png",
+    name: "Curly Fries",
+    imageUrl: fries3,
     category: "fries & sides",
-    description:
-      "Crispy & juicy boneless strips of Chicken, served with Honey & Mustard sauce",
+    description: "Seasoned curly potato fries with a zesty flavor twist.",
     price: 175,
   },
   {
     id: 12,
-    name: "ICE TEA",
-    imageUrl:
-      "food/drink3.png",
+    name: "Strawberry Ice Tea",
+    imageUrl: drink3,
     category: "drinks",
-    description: "Lipton Ice Tea (50cl)",
-    price: 80,
+    description: "Refreshing iced tea with a hint of strawberry zest",
+    price: 75,
   },
   {
     id: 12,
-    name: "CHICKEN SALAD",
-    imageUrl:
-      "food/salad.png",
+    name: "Shawarma Wrap",
+    imageUrl: wrap3,
     category: "wraps",
-    description: "Fresh Lettuce leaves, red cabbage, cheese, cherry tomatoes, onion rings & topped with freshly prepared Hot & Crispy Strips.",
-    price: 80,
+    description:
+      "Marinated chicken, garlic sauce, and pickles wrapped in flatbread.",
+    price: 250,
   },
 ];
