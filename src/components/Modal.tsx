@@ -57,7 +57,7 @@ export const Modal: FC<PropsType> = ({
     <>
       {/* Main Modal */}
       <div className="fixed flex top-0 left-0 bg-black w-full h-[100vh] bg-opacity-50 justify-center items-center">
-        <div className="relative grid md:grid-cols-2 p-6 sm:p-10 gap-4 bg-white max-w-[800px] m-auto mx-2 shadow-sm rounded-md h-auto md:h-auto max-h-[90vh] overflow-y-auto">
+        <div className="relative grid md:grid-cols-2 p-4 sm:p-6 gap-4 bg-white max-w-[500px] m-auto mx-2 shadow-sm rounded-md h-auto max-h-[90vh] overflow-y-auto">
           <div className="absolute top-0 left-0 w-full h-3 bg-red-600 rounded-t-md"></div>
 
           <button
@@ -70,7 +70,7 @@ export const Modal: FC<PropsType> = ({
           <motion.img
             src={imageUrl}
             alt="food-image"
-            className="w-full h-auto"
+            className="w-64 mt-8"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -83,28 +83,30 @@ export const Modal: FC<PropsType> = ({
                 Rs {price.toFixed(2)}
               </p>
             </div>
-            <p>{description}</p>
+            <p className="text-center">{description}</p>
 
-            <div className="flex items-center gap-4 mt-2">
+            {/* Row with decrement, quantity, increment buttons */}
+            <div className="flex items-center gap-4 mt-2 w-full justify-center">
               <button
                 onClick={handleDecrement}
-                className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
               >
                 <FaMinus />
               </button>
               <span className="text-lg font-medium">{quantity}</span>
               <button
                 onClick={handleIncrement}
-                className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
               >
                 <FaPlus />
               </button>
             </div>
 
-            <div className="flex gap-4 mt-4 w-full md:max-w-[350px]">
+            {/* Row with wide "Add to Cart" button */}
+            <div className="w-full mt-4">
               <button
                 onClick={handleAddToCartClick}
-                className="bg-primary-color p-3 flex-grow font-light rounded-md text-white"
+                className="bg-primary-color p-3 w-full font-light rounded-md text-white text-center"
               >
                 Add to Cart ({quantity})
               </button>

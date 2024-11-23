@@ -1,4 +1,5 @@
 import { ChangeEvent, FC, FormEvent, useState } from "react";
+import { FaSearch } from "react-icons/fa";
 
 type PropsType = {
   searchTerm: string;
@@ -16,14 +17,17 @@ export const SearchBar: FC<PropsType> = ({ searchTerm, setSearchTerm }) => {
 
   return (
     <div className="py-10 p-4">
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Search by name"
-          value={searchTerm}
-          onChange={handleChange}
-          className="border w-full p-4 rounded-md"
-        />
+     <form onSubmit={handleSubmit} className="relative max-w-lg mx-auto">
+        <div className="flex items-center border w-full p-2 rounded-md bg-white shadow-sm">
+          <FaSearch className="text-gray-400 ml-3" />
+          <input
+            type="text"
+            placeholder="Search by name"
+            value={searchTerm}
+            onChange={handleChange}
+            className="w-full p-2 pl-3 focus:outline-none"
+          />
+        </div>
       </form>
     </div>
   );

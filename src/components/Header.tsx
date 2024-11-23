@@ -5,6 +5,7 @@ import { FaTimes } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
 
 type HeaderProps = {
   cartItems: (foodDataType & { quantity: number })[];
@@ -66,8 +67,34 @@ export const Header: React.FC<HeaderProps> = ({
     navigate("/"); // Replace "/dashboard" with your target route
   };
 
+  // Function to clear the cart
+  const clearCart = () => {
+    Swal.fire({
+      title: "Confirm Clear Cart",
+      text: "Are you sure you want to remove all items from the cart?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Clear",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        cartItems.length = 0; // Clear all items in the cart
+        Swal.fire({
+          title: "Cart Cleared",
+          text: "All items have been removed from your cart.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setIsCartOpen(false); // Optionally close the cart modal
+      }
+    });
+  };
+
   return (
-    <div className="py-4 px-4 border-b-8 border-primary-color relative" >
+    <div className="py-4 px-4 border-b-8 border-primary-color relative">
       <div className="flex justify-between items-center max-w-[1200px] m-auto">
         <div className="flex gap-4">
           <img
@@ -87,43 +114,45 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         <div className="flex items-center relative">
-          <div onClick={toggleCart}>
+          {/* Cart Button */}
+          <div onClick={toggleCart} className="relative cursor-pointer">
+            <FaShoppingCart size={24} />
             {cartItems.length > 0 && (
-              <span className="absolute bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+              <span className="absolute top-[-5px] right-[-10px] bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                 {cartItems.length}
               </span>
             )}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 cursor-pointer"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m-4 8h18a2 2 0 100-4H5a2 2 0 000 4z"
-              />
-            </svg>
           </div>
 
-          <div className="flex items-center relative ml-10" onClick={logout}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 cursor-pointer"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-6 0v-1m6-8v-1a3 3 0 00-6 0v1"
-              />
-            </svg>
+          {/* Logout Button */}
+          <div
+            className="flex items-center relative ml-10 cursor-pointer"
+            onClick={() => {
+              Swal.fire({
+                title: "Confirm Logout",
+                text: "Are you sure you want to log out?",
+                icon: "warning",
+                iconColor: "#ff0000",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Confirm",
+                cancelButtonText: "Cancel",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  logout(); // Call logout function on confirmation
+                  Swal.fire({
+                    title: "Logged Out",
+                    text: "You have been successfully logged out.",
+                    icon: "success",
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                }
+              });
+            }}
+          >
+            <FaSignOutAlt size={24} />
           </div>
         </div>
       </div>
@@ -134,15 +163,22 @@ export const Header: React.FC<HeaderProps> = ({
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
           onClick={handleOutsideClick}
         >
-          <div className="relative bg-white shadow-lg p-6 w-[90%] max-w-lg rounded-lg">
+          <div className="relative bg-white shadow-lg p-12 w-[90%] max-w-lg rounded-lg">
             <button
               onClick={toggleCart}
               className="absolute top-2 right-2 text-gray-500 hover:text-black"
             >
               <FaTimes size={20} />
             </button>
-
-            <h2 className="font-bold text-lg mb-4">Order</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-bold text-lg">Order</h2>
+              <button
+                onClick={clearCart}
+                className="bg-red-500 text-white text-sm px-4 py-2 rounded hover:bg-red-600"
+              >
+                Clear Cart
+              </button>
+            </div>
 
             {cartItems.length === 0 ? (
               <p>Your cart is empty.</p>
@@ -297,6 +333,7 @@ export const Header: React.FC<HeaderProps> = ({
                       title: "Receipt Printing",
                       text: "Your receipt is being printed...",
                       icon: "info",
+                      iconColor: "#ff0000",
                       showConfirmButton: false,
                       timer: 5000, // Auto-close after 2 seconds
                     });

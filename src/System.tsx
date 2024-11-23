@@ -88,7 +88,7 @@ function System() {
         backgroundSize: "20px 20px", // Controls the spacing between dots
       }}
     >
-      <header className="sticky top-0 z-50 bg-white shadow-md">
+      <header className="bg-white shadow-md">
         <Header
           cartItems={cartItems}
           onUpdateCartItem={(id, newQuantity) => {

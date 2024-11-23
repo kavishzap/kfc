@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Image from "../assets/bg.png";
+import Swal from "sweetalert2";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 
 type Props = {
   logo: string;
@@ -12,6 +14,8 @@ const Login: React.FC<Props> = ({ logo, illustration }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
   const navigate = useNavigate();
   // Navigation function
   const navigateToPage = () => {
@@ -37,7 +41,8 @@ const Login: React.FC<Props> = ({ logo, illustration }) => {
       <div
         className="flex flex-col md:flex-row items-center justify-center h-screen overflow-hidden"
         style={{
-          backgroundImage: "radial-gradient(circle, #000 -2px, transparent 2px)",
+          backgroundImage:
+            "radial-gradient(circle, #000 -2px, transparent 2px)",
           backgroundSize: "20px 20px", // Controls the spacing between dots
         }}
       >
@@ -75,15 +80,25 @@ const Login: React.FC<Props> = ({ logo, illustration }) => {
               />
             </div>
 
-            {/* Password Input */}
             <div className="relative">
               <input
-                type="password"
+                type={passwordVisible ? "text" : "password"} // Toggle input type
                 placeholder="Password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} // Update state on input
+                onChange={(e) => setPassword(e.target.value)} // Update password state
                 className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200 text-gray-700"
               />
+              <button
+                type="button"
+                onClick={() => setPasswordVisible(!passwordVisible)} // Toggle visibility
+                className="absolute inset-y-0 right-3 flex items-center text-gray-600"
+              >
+                {passwordVisible ? (
+                  <FaEyeSlash size={20} /> // Eye-slash icon when visible
+                ) : (
+                  <FaEye size={20} /> // Eye icon when hidden
+                )}
+              </button>
             </div>
 
             {/* Remember Me & Forgot Password */}
@@ -108,27 +123,39 @@ const Login: React.FC<Props> = ({ logo, illustration }) => {
                   setErrorMessage(""); // Clear any previous error message
                   navigateToPage(); // Navigate to another page
                 } else {
-                  setErrorMessage("Invalid Username or Password"); // Show error message
+                  Swal.fire({
+                    title: "Login Failed",
+                    text: "Invalid Username or Password",
+                    icon: "error",
+                    iconColor: "#ff0000",
+                    confirmButtonText: "Try Again",
+                    confirmButtonColor: "#ff0000",
+                  });
                 }
               }}
               className="w-full py-3 bg-primary-color text-white font-semibold rounded-lg shadow-md hover:bg-red-300 focus:outline-none focus:ring focus:ring-blue-200"
             >
               Login Now
             </button>
+
             <button
               type="button"
+              onClick={() => {
+                Swal.fire({
+                  title: "Contact Us",
+                  text: "Please visit our official page to contact us for service.",
+                  icon: "info",
+                  iconColor: "#ff0000",
+                  showConfirmButton: false,
+                  footer:
+                    '<a href="https://yourwebsite.com" target="_blank">Visit Official Page</a>',
+                });
+              }}
               className="w-full py-3 border text-primary-color font-semibold rounded-lg shadow-md hover:bg-red-100 focus:outline-none focus:ring focus:ring-blue-200"
             >
               Create Account
             </button>
           </form>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <p className="text-sm text-red-500 text-center mt-4">
-              {errorMessage}
-            </p>
-          )}
         </div>
       </div>
     </>
