@@ -56,7 +56,7 @@ export const Modal: FC<PropsType> = ({
   return (
     <>
       {/* Main Modal */}
-      <div className="fixed flex top-0 left-0 bg-black w-full h-[100vh] bg-opacity-50 justify-center items-center z-[9999]">
+      <div className="fixed flex top-0 left-0 bg-black w-full h-[100vh] bg-opacity-50 justify-center items-center z-[9998]">
         <div className="relative grid md:grid-cols-2 p-4 sm:p-6 gap-4 bg-white max-w-[500px] m-auto mx-2 shadow-sm rounded-md h-auto max-h-[90vh] overflow-y-auto">
           <div className="absolute top-0 left-0 w-full h-3 bg-red-600 rounded-t-md"></div>
 
@@ -117,7 +117,7 @@ export const Modal: FC<PropsType> = ({
 
       {/* Confirmation Modal */}
       {isConfirmModalOpen && (
-        <div className="fixed flex top-0 left-0 bg-black w-full h-[100vh] bg-opacity-50 justify-center items-center">
+        <div className="fixed flex top-0 left-0 bg-black w-full h-[100vh] bg-opacity-50 justify-center items-center z-[9999]">
           <div className="bg-white p-6 rounded-md shadow-md max-w-sm w-full">
             <h2 className="font-bold text-lg mb-4">Confirm Add to Cart</h2>
             <p>
