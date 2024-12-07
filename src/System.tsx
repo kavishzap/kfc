@@ -1,13 +1,11 @@
 import React, { FC, useEffect, useState } from "react";
 import { Filter } from "./components/Filter/Filter";
 import { FoodCard } from "./components/FoodCard";
-import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { SearchBar } from "./components/SearchBar";
 import { foodData } from "./data/foodData";
 import { foodDataType } from "./Types/types";
 import { Modal } from "./components/Modal";
-import Cart from "./components/Cart";
 
 type CartItemType = foodDataType & { quantity: number };
 
@@ -162,11 +160,6 @@ function System() {
           onAddToCart={handleAddToCart}
         />
       )}
-      <Cart
-        cartItems={cartItems}
-        isCartOpen={isCartOpen}
-        toggleCart={toggleCart}
-      />{" "}
       <footer>
         {/* <Footer /> */}
       </footer>

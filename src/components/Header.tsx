@@ -22,10 +22,15 @@ export const Header: React.FC<HeaderProps> = ({
 
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
+  const [moneyReceived, setMoneyReceived] = useState(0);
+
+  const [isPrintVisible, setIsPrintVisible] = useState(false);
+
+  const [isMoneyValidated, setIsMoneyValidated] = useState(false);
+
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
   };
-  const toggleCheckout = () => setIsCheckoutOpen(!isCheckoutOpen);
 
   const handleOutsideClick = (e: React.MouseEvent) => {
     if ((e.target as Element).id === "cart-modal") {
@@ -296,7 +301,6 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
               ))}
             </div>
-
             <div className="mb-4">
               <div className="flex justify-between">
                 <span>Subtotal:</span>
@@ -305,6 +309,72 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="flex justify-between border-b-4 border-dotted pt-2">
                 <span>Total:</span>
                 <span>Rs {total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              {!isMoneyValidated ? (
+                <div className="flex items-center">
+                  <div className="flex-1">
+                    <label
+                      className="block text-sm font-semibold mb-2"
+                      htmlFor="moneyReceived"
+                    >
+                      Money Received:
+                    </label>
+                    <input
+                      id="moneyReceived"
+                      type="text"
+                      className="border border-gray-300 rounded px-2 py-1 w-full text-center"
+                      placeholder="Enter amount received"
+                      value={moneyReceived}
+                      onChange={(e) =>
+                        setMoneyReceived(parseFloat(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+                  <button
+                    className="ml-2 mt-7 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                    onClick={() => {
+                      if (moneyReceived >= total) {
+                        setIsMoneyValidated(true); // Mark as validated
+                        setIsPrintVisible(true);
+                        Swal.fire({
+                          title: "Amount Received",
+                          text: `Total: Rs ${total.toFixed(
+                            2
+                          )}, Received: Rs ${moneyReceived.toFixed(
+                            2
+                          )}, Change: Rs ${(moneyReceived - total).toFixed(2)}`,
+                          icon: "success",
+                        });
+                      } else {
+                        Swal.fire({
+                          title: "Insufficient Amount",
+                          text: `Received: Rs ${moneyReceived.toFixed(
+                            2
+                          )}. Please collect the remaining Rs ${(
+                            total - moneyReceived
+                          ).toFixed(2)}.`,
+                          icon: "error",
+                        });
+                      }
+                    }}
+                  >
+                    Done
+                  </button>
+                </div>
+              ) : (
+                <div className="text-sm font-semibold text-green-600">
+                  Money Received: Rs {moneyReceived.toFixed(2)}
+                </div>
+              )}
+            </div>
+            {/* Display Change */}
+            <div className="mb-4">
+              <div className="flex justify-between">
+                <span>Change:</span>
+                <span>Rs {(moneyReceived - total).toFixed(2)}</span>
               </div>
             </div>
 
@@ -326,23 +396,25 @@ export const Header: React.FC<HeaderProps> = ({
                 >
                   Cancel
                 </button>
-                <button
-                  className="bg-[#00ff00] rounded-md text-white p-3"
-                  onClick={() => {
-                    Swal.fire({
-                      title: "Receipt Printing",
-                      text: "Your receipt is being printed...",
-                      icon: "info",
-                      iconColor: "#ff0000",
-                      showConfirmButton: false,
-                      timer: 5000, // Auto-close after 2 seconds
-                    });
-                    setIsCheckoutOpen(false);
-                    //clear cart function
-                  }}
-                >
-                  Print
-                </button>
+                {isPrintVisible && (
+                  <button
+                    className="bg-[#00ff00] rounded-md text-white p-3"
+                    onClick={() => {
+                      Swal.fire({
+                        title: "Receipt Printing",
+                        text: "Your receipt is being printed...",
+                        icon: "info",
+                        iconColor: "#ff0000",
+                        showConfirmButton: false,
+                        timer: 5000, // Auto-close after 2 seconds
+                      });
+                      setIsCheckoutOpen(false);
+                      // Clear cart function
+                    }}
+                  >
+                    Print
+                  </button>
+                )}
               </div>
             </div>
           </div>
