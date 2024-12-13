@@ -408,6 +408,7 @@ export const Header: React.FC<HeaderProps> = ({
                         showConfirmButton: false,
                         timer: 5000, // Auto-close after 2 seconds
                       });
+                      cartItems.length = 0; // Clear all items in the cart
                       setIsCheckoutOpen(false);
                       // Clear cart function
                     }}

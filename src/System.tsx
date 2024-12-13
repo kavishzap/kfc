@@ -102,10 +102,6 @@ function System() {
         />
       </header>
       <main className="flex flex-col m-auto max-w-[1200px] px-4">
-        {/* <ImageCarousel images={images} /> */}
-        {/* <h1 className="text-center capitalize font-bold text-3xl my-8">
-            Start Ordering Now
-          </h1> */}
         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <Filter current={currentSelection} setCurrent={setCurrentSelection} />
         {isLoading && (
@@ -118,9 +114,6 @@ function System() {
         )}
         {!isLoading && (
           <>
-            {/* <h1 className="text-center capitalize font-bold text-3xl my-8">
-                {currentSelection}
-              </h1> */}
             {dataArray.length === 0 && (
               <div className="flex flex-col gap-4 items-center justify-center my-8 min-h-[30vh]">
                 <div className="text-center text-md">
@@ -128,7 +121,7 @@ function System() {
                 </div>
               </div>
             )}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4  mt-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4  mt-4">
               {dataArray.slice(0, maxDisplay).map((data) => (
                 <FoodCard
                   key={data.id}
