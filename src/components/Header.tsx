@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import kfc_logo from "../assets/_5C0DE2EC-2C9F-44EC-9667-61334C1CADE3_-removebg-preview.png";
 import { foodDataType } from "../Types/types";
 import { FaTimes } from "react-icons/fa";
@@ -27,6 +27,24 @@ export const Header: React.FC<HeaderProps> = ({
   const [isPrintVisible, setIsPrintVisible] = useState(false);
 
   const [isMoneyValidated, setIsMoneyValidated] = useState(false);
+
+  const [storedUsername, setStoredUsername] = useState("");
+
+  const [companyLogo, setCompanyLogo] = useState("");
+
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("username");
+    if (savedUsername) {
+      setStoredUsername(savedUsername);
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedLogo = localStorage.getItem("logo");
+    if (storedLogo) {
+      setCompanyLogo(storedLogo);
+    }
+  }, []);
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
@@ -103,17 +121,17 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="flex justify-between items-center max-w-[1200px] m-auto">
         <div className="flex gap-4">
           <img
-            src={kfc_logo}
-            alt="KFC Logo"
-            width={80}
+            src={companyLogo ? `data:image/png;base64,${companyLogo}` : ""}
+            alt="Company Logo"
+            width={36}
             className="object-contain"
           />
           <div>
             <div className="font-bold text-lg sm:text-2xl">
-              Le Coin Mauricien
+              {storedUsername || "?"}
             </div>
             <div className="font-light text-xs sm:text-sm uppercase tracking-wider">
-              Menu Website
+              POS SYSTEM
             </div>
           </div>
         </div>

@@ -1,22 +1,69 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
+import logo from "../assets/pos.png";
 
-type Props = {
-  logo: string;
-  illustration: string;
-};
-
-const Login: React.FC<Props> = ({ logo }) => {
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const navigateToPage = () => {
-    navigate("/system");
+  const API_URL = import.meta.env.VITE_REACT_APP_LOGIN_URL;
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      console.log("url", `${API_URL}?company_username=eq.${username}`);
+      const response = await axios.get(
+        `${API_URL}?company_username=eq.${username}`,
+        {
+          headers: {
+            apikey: import.meta.env.VITE_REACT_APP_ANON_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_ANON_KEY}`,
+          },
+        }
+      );
+
+      const data = response.data;
+
+      if (data.length > 0) {
+        const user = data[0];
+        if (user.company_password === password) {
+          localStorage.setItem("username", username);
+          localStorage.setItem("logo", user.company_logo);
+          console.log("Login successful for", username);
+          navigate("/system");
+        } else {
+          Swal.fire({
+            title: "Login Failed",
+            text: "Invalid Password",
+            icon: "error",
+            confirmButtonText: "Try Again",
+          });
+        }
+      } else {
+        Swal.fire({
+          title: "Login Failed",
+          text: "Username not found",
+          icon: "error",
+          confirmButtonText: "Try Again",
+        });
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      Swal.fire({
+        title: "Error",
+        text: "An error occurred while logging in. Please try again later.",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,29 +82,26 @@ const Login: React.FC<Props> = ({ logo }) => {
         `}
       </style>
       <div
-        className="flex flex-col md:flex-row items-center justify-center min-h-screen overflow-hidden p-4 bg-gray-100"
+        className="flex items-center justify-center min-h-screen overflow-hidden bg-gray-100"
         style={{
-          backgroundImage: "radial-gradient(circle, #000 -2px, transparent 2px)",
+          backgroundImage:
+            "radial-gradient(circle, #000 -2px, transparent 2px)",
           backgroundSize: "20px 20px",
         }}
       >
-        <div className="flex flex-col flex-1 max-w-xs sm:max-w-sm lg:max-w-md w-full bg-white shadow-lg rounded-lg p-4 sm:p-6">
-          <div className="flex justify-center mb-6">
+        <div className="flex flex-col max-w-xs sm:max-w-sm lg:max-w-md w-full bg-white shadow-lg rounded-lg p-6 space-y-4">
+          <div className="flex justify-center">
             <img src={logo} alt="Logo" className="w-24 sm:w-32" />
           </div>
 
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 text-center mb-3">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 text-center">
             MINDKORE POS System
           </h2>
-          <p className="text-sm text-gray-600 text-center mb-4">
+          <p className="text-sm text-gray-600 text-center">
             Please login with your company information.
           </p>
-          <p className="text-xs text-gray-500 text-center mb-3">
-            Use <span className="font-bold text-red-600">Username: admin</span> and
-            <span className="font-bold text-red-600"> Password: admin</span> to log in.
-          </p>
 
-          <form className="space-y-3">
+          <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
             <div className="relative">
               <input
                 type="text"
@@ -104,41 +148,33 @@ const Login: React.FC<Props> = ({ logo }) => {
 
             <button
               type="button"
-              onClick={() => {
-                if (username === "admin" && password === "admin") {
-                  navigateToPage();
-                } else {
-                  Swal.fire({
-                    title: "Login Failed",
-                    text: "Invalid Username or Password",
-                    icon: "error",
-                    iconColor: "#ff0000",
-                    confirmButtonText: "Try Again",
-                    confirmButtonColor: "#ff0000",
-                  });
-                }
-              }}
-              className="w-full py-2 bg-primary-color text-white font-semibold rounded-lg shadow-md hover:bg-red-300 focus:outline-none focus:ring focus:ring-blue-200"
+              onClick={handleLogin}
+              className="w-full py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-200 flex justify-center items-center"
             >
-              Login Now
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                Swal.fire({
-                  title: "Contact Us",
-                  text: "Please visit our official page to contact us for service.",
-                  icon: "info",
-                  iconColor: "#ff0000",
-                  showConfirmButton: false,
-                  footer:
-                    '<a href="https://yourwebsite.com" target="_blank">Visit Official Page</a>',
-                });
-              }}
-              className="w-full py-2 border text-primary-color font-semibold rounded-lg shadow-md hover:bg-red-100 focus:outline-none focus:ring focus:ring-blue-200"
-            >
-              Create Account
+              {loading ? (
+                <svg
+                  className="w-5 h-5 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+              ) : (
+                "Login Now"
+              )}
             </button>
           </form>
         </div>
