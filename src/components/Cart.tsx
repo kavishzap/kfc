@@ -24,9 +24,11 @@ const Cart: React.FC<CartProps> = ({ cartItems, isCartOpen, toggleCart }) => {
         <ul>
           {cartItems.map((item) => (
             <li key={item.id} className="flex justify-between my-2">
-              <span>{item.name}</span>
+              <span>{item.product_name}</span>
+
               <span>Qty: {item.quantity}</span>
-              <span>Rs {item.price * item.quantity}</span>
+              
+              <span>Rs {parseInt(item.product_selling_price) * item.quantity}</span>
             </li>
           ))}
         </ul>

@@ -4,6 +4,11 @@ import { FilterButton } from "./FilterButton";
 import { AllIcon } from "./icons/AllIcon";
 import axios from "axios";
 
+interface Product {
+  product_category?: string;
+}
+
+
 export const Filter: FC<CurrentSelectionProps> = ({ current, setCurrent }) => {
   const [categories, setCategories] = useState<string[]>([]);
 
@@ -18,7 +23,7 @@ export const Filter: FC<CurrentSelectionProps> = ({ current, setCurrent }) => {
       }
 
       try {
-        const response = await axios.get(`${API_URL}?product_comapany_name=eq.${username}`, {
+        const response = await axios.get<Product[]>(`${API_URL}?product_comapany_name=eq.${username}`, {
           headers: {
             "apikey": import.meta.env.VITE_REACT_APP_ANON_KEY,
             "Authorization": `Bearer ${import.meta.env.VITE_REACT_APP_ANON_KEY}`,
@@ -28,7 +33,7 @@ export const Filter: FC<CurrentSelectionProps> = ({ current, setCurrent }) => {
         const data = response.data;
         console.log('data',data);
         const uniqueCategories = Array.from(
-          new Set(data.map((product: any) => (product.product_category || "")))
+          new Set(data.map((product) => (product.product_category || "")))
         );
         setCategories(["all", ...uniqueCategories]);
         console.log('uniqueCategories',uniqueCategories);
@@ -37,6 +42,7 @@ export const Filter: FC<CurrentSelectionProps> = ({ current, setCurrent }) => {
       }
     };
 
+    
     fetchCategories();
   }, []);
 
