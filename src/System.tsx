@@ -3,7 +3,7 @@ import { Filter } from "./components/Filter/Filter";
 import { FoodCard } from "./components/FoodCard";
 import { Header } from "./components/Header";
 import { SearchBar } from "./components/SearchBar";
-import { foodData } from "./data/foodData";
+import { fetchFoodData, foodData } from "./data/foodData";
 import { foodDataType } from "./Types/types";
 import { Modal } from "./components/Modal";
 
@@ -12,6 +12,7 @@ type CartItemType = foodDataType & { quantity: number };
 function System() {
   const [currentSelection, setCurrentSelection] = useState("all");
   const [maxDisplay, setMaxDisplay] = useState(6);
+  const [originalData, setOriginalData] = useState<foodDataType[]>([]);
   const [dataArray, setDataArray] = useState<foodDataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isButton, setIsButton] = useState(false);
@@ -26,22 +27,59 @@ function System() {
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    setMaxDisplay(6);
-    const updatedData = reorderData();
-    setDataArray(updatedData);
-    buttonChecker(updatedData);
-    setTimeout(() => setIsLoading(false), 1500);
+    const fetchData = async () => {
+      const data = await fetchFoodData();
+      setOriginalData(data); // Store original data
+      setDataArray(data); // Initialize filtered data
+      buttonChecker(data);
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
   }, [currentSelection, searchTerm]);
 
+  const applyFilters = () => {
+    setIsLoading(true);
+    let filteredData = originalData;
+
+    // Apply category filter
+    if (currentSelection !== "all") {
+      filteredData = filteredData.filter(
+        (item) => item.product_category === currentSelection
+      );
+    }
+
+    // Apply search term filter
+    if (searchTerm.trim() !== "") {
+      filteredData = filteredData.filter((item) =>
+        item.product_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setDataArray(filteredData);
+    buttonChecker(filteredData);
+    setIsLoading(false);
+  };
+
   const reorderData = (): foodDataType[] => {
-    const ordered_data = foodData.sort((a, b) => (a.name > b.name ? 1 : -1));
+    const ordered_data = dataArray.sort((a, b) =>
+      (a.product_name || "").localeCompare(b.product_name || "")
+    );
+
     const filtered_data =
       currentSelection === "all"
         ? ordered_data
-        : ordered_data.filter((data) => data.category === currentSelection);
+        : ordered_data.filter(
+            (data) => data.product_category === currentSelection
+          );
+
+    // Filter by search term
     return filtered_data.filter((data) =>
-      data.name.toLowerCase().includes(searchTerm.toLowerCase())
+      data.product_name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -143,19 +181,12 @@ function System() {
       </main>
       {isModalOpen && selectedFood && (
         <Modal
-          id={selectedFood.id}
-          name={selectedFood.name}
-          description={selectedFood.description}
-          imageUrl={selectedFood.imageUrl}
-          price={selectedFood.price}
-          category={selectedFood.category} // Pass category to match foodDataType
+          {...selectedFood} // Spread props for cleaner code
           setIsModal={setIsModalOpen}
           onAddToCart={handleAddToCart}
         />
       )}
-      <footer>
-        {/* <Footer /> */}
-      </footer>
+      <footer>{/* <Footer /> */}</footer>
     </div>
   );
 }

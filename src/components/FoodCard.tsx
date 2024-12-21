@@ -12,11 +12,11 @@ type FoodCardProps = foodDataType & {
 
 export const FoodCard: FC<FoodCardProps> = ({
   id,
-  name,
-  imageUrl,
-  description,
-  price,
-  category,
+  product_name,
+  product_image,
+  product_description,
+  product_selling_price,
+  product_category,
   onAddToCart,
 }) => {
   const [isModal, setIsModal] = useState(false);
@@ -28,17 +28,28 @@ export const FoodCard: FC<FoodCardProps> = ({
 
   const handleAddToCart = onAddToCart || (() => {});
   const handleIncrement = () => setQuantity((prev) => prev + 1);
-  const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  const handleDecrement = () =>
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
   const handleConfirm = () => {
-    handleAddToCart({ id, name, description, imageUrl, price, category }, quantity);
+    handleAddToCart(
+      {
+        id,
+        product_name,
+        product_image,
+        product_description,
+        product_category,
+        product_selling_price,
+      },
+      quantity
+    );
     setQuantity(1); // Reset quantity to 1
     setIsModal(false);
     Swal.fire({
       title: "Selection Confirmed!",
-      text: `${quantity} ${name} added to your cart.`,
+      text: `${quantity} ${product_name} added to your cart.`,
       icon: "success",
       confirmButtonText: "OK",
-      confirmButtonColor: "#ff0000", // Optional customization
+      confirmButtonColor: "#ff0000",
     });
   };
 
@@ -47,26 +58,28 @@ export const FoodCard: FC<FoodCardProps> = ({
       {isModal && (
         <Modal
           id={id}
-          description={description}
-          name={name}
-          imageUrl={imageUrl}
+          product_description={product_description}
+          product_name={product_name}
+          product_image={product_image}
           setIsModal={setIsModal}
-          price={price}
+          product_selling_price={product_selling_price}
           onAddToCart={handleAddToCart}
-          category={category}
+          product_category={product_category}
         />
       )}
-      <div
-        className="text-center bg-white shadow-md p-8 rounded-md group cursor-pointer hover:border-primary-color border border-white"
-      >
+      <div className="text-center bg-white shadow-md p-8 rounded-md group cursor-pointer hover:border-primary-color border border-white">
         <LazyLoadImage
-          src={imageUrl}
-          alt={name}
+           src={`data:image/png;base64,${product_image}`}
+          alt={product_name}
           effect="blur"
           className="w-64 h-auto rounded-md object-cover"
         />
-        <h2 className="font-bold group-hover:text-primary-color">{name}</h2>
-        <p className="text-gray-700">Rs {price.toFixed(2)}</p>
+        <h2 className="font-bold group-hover:text-primary-color">
+          {product_name}
+        </h2>
+        <p className="text-gray-700">
+          Rs {parseFloat(product_selling_price).toFixed(2)}
+        </p>
 
         <div className="flex items-center gap-4 mt-2 w-full justify-center">
           <button

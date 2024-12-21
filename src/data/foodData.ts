@@ -1,126 +1,70 @@
+import axios from "axios";
 import { foodDataType } from "../Types/types";
 
-//image import
-import burger1 from "../assets/Food POS UI Design (Demo) (Community)/burger1.png";
-import burger2 from "../assets/Food POS UI Design (Demo) (Community)/burger2.png";
-import burger3 from "../assets/Food POS UI Design (Demo) (Community)/burger3.png";
+export const fetchFoodData = async (): Promise<foodDataType[]> => {
+  const API_URL = import.meta.env.VITE_REACT_APP_PRODUCTS_URL;
+  const username = localStorage.getItem("username");
 
-import wrap1 from "../assets/Food POS UI Design (Demo) (Community)/wrap1.png";
-import wrap2 from "../assets/Food POS UI Design (Demo) (Community)/wrap2.png";
-import wrap3 from "../assets/Food POS UI Design (Demo) (Community)/wrap3.png";
+  if (!username) {
+    console.error("Username not found in localStorage.");
+    return [];
+  }
 
-import fries1 from "../assets/Food POS UI Design (Demo) (Community)/fries1.png";
-import fries2 from "../assets/Food POS UI Design (Demo) (Community)/fries2.png";
-import fries3 from "../assets/Food POS UI Design (Demo) (Community)/fries3.png";
+  try {
+    const response = await axios.get(`${API_URL}?product_comapany_name=eq.${username}`, {
+      headers: {
+        "apikey": import.meta.env.VITE_REACT_APP_ANON_KEY,
+        "Authorization": `Bearer ${import.meta.env.VITE_REACT_APP_ANON_KEY}`,
+      },
+    });
 
-import drink1 from "../assets/Food POS UI Design (Demo) (Community)/drink1.png";
-import drink2 from "../assets/Food POS UI Design (Demo) (Community)/drink2.png";
-import drink3 from "../assets/Food POS UI Design (Demo) (Community)/drink3.png";
+    if (!response.data || !Array.isArray(response.data)) {
+      console.error("Unexpected API response format:", response.data);
+      return [];
+    }
 
-export const foodData: foodDataType[] = [
-  {
-    id: 1,
-    name: "Classic Cheeseburger",
-    imageUrl: burger1,
-    category: "burgers",
-    description:
-      "Juicy chicken patty topped with cheddar cheese, lettuce, and tomato.",
-    price: 340,
-  },
-  {
-    id: 2,
-    name: "Veggie Delight Burger",
-    imageUrl: burger2,
-    category: "burgers",
-    description:
-      "Grilled plant-based patty with fresh veggies and a tangy sauce.",
-    price: 280,
-  },
-  {
-    id: 3,
-    name: "Chicken Burger",
-    imageUrl: burger3,
-    category: "burgers",
-    description: "Crispy fried chicken with mayo and pickles in a toasted bun.",
-    price: 340,
-  },
+    const data = response.data;
 
-  {
-    id: 5,
-    name: "Grilled Chicken Wrap",
-    imageUrl: wrap1,
-    category: "wraps",
-    description:
-      "Tender grilled chicken, lettuce, and creamy dressing in a soft tortilla.",
-    price: 250,
-  },
-  {
-    id: 6,
-    name: "Falafel Wrap",
-    imageUrl: wrap2,
-    category: "wraps",
-    description:
-      "Crispy falafels, hummus, and fresh veggies wrapped in pita bread",
-    price: 250,
-  },
-  {
-    id: 7,
-    name: "Berry Smoothie",
-    imageUrl: drink2,
-    category: "drinks",
-    description: "A creamy blend of mixed berries and yogurt.",
-    price: 75,
-  },
-  {
-    id: 8,
-    name: "Lemon Iced Tea",
-    imageUrl: drink1,
-    category: "drinks",
-    description: "Refreshing iced tea with a hint of lemon zest.",
-    price: 75,
-  },
-  {
-    id: 9,
-    name: "Cheese Fries",
-    imageUrl: fries1,
-    category: "fries & sides",
-    description:
-      "Fries loaded with melted cheddar cheese and a sprinkle of herbs.",
-    price: 125,
-  },
-  {
-    id: 10,
-    name: "Classic Fries",
-    imageUrl: fries2,
-    category: "fries & sides",
-    description:
-      "Crispy golden potato fries, lightly salted for the perfect crunch.",
-    price: 125,
-  },
+    return data.map((product: {
+      id: number;
+      product_name: string;
+      product_selling_price: string;
+      product_image: string;
+      product_category: string;
+      product_description: string;
+    }): foodDataType => ({
+      id: product.id,
+      product_name: product.product_name,
+      product_selling_price: product.product_selling_price,
+      product_image: product.product_image,
+      product_category: product.product_category,
+      product_description: product.product_description,
+    }));
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error fetching food data:", error.message, error.response);
+    } else if (error instanceof Error) {
+      console.error("Error fetching food data:", error.message);
+    } else {
+      console.error("Unknown error fetching food data:", error);
+    }
+    return [];
+  }
+};
 
-  {
-    id: 11,
-    name: "Curly Fries",
-    imageUrl: fries3,
-    category: "fries & sides",
-    description: "Seasoned curly potato fries with a zesty flavor twist.",
-    price: 175,
-  },
-  {
-    id: 12,
-    name: "Strawberry Ice Tea",
-    imageUrl: drink3,
-    category: "drinks",
-    description: "Refreshing iced tea with a hint of strawberry zest",
-    price: 75,
-  },
-  {
-    id: 12,
-    name: "Shawarma Wrap",
-    imageUrl: wrap3,
-    category: "wraps",
-    description:
-      "Marinated chicken, garlic sauce, and pickles wrapped in flatbread.",
-    price: 250,
-  },
-];
+export let foodData: foodDataType[] = [];
+
+export const loadFoodData = async (): Promise<void> => {
+  try {
+    const data = await fetchFoodData();
+    foodData = data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error loading food data:", error.message, error.response);
+    } else if (error instanceof Error) {
+      console.error("Error loading food data:", error.message);
+    } else {
+      console.error("Unknown error loading food data:", error);
+    }
+  }
+};

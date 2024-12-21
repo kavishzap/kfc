@@ -1,45 +1,56 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { CurrentSelectionProps } from "../../Types/types";
 import { FilterButton } from "./FilterButton";
 import { AllIcon } from "./icons/AllIcon";
-import { BurgerIcon } from "./icons/BurgerIcon";
-import { DrinkIcon } from "./icons/DrinkIcon";
-import { FriesIcon } from "./icons/FriesIcon";
-import { WrapIcon } from "./icons/WrapsIcon";
+import axios from "axios";
 
 export const Filter: FC<CurrentSelectionProps> = ({ current, setCurrent }) => {
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const API_URL = import.meta.env.VITE_REACT_APP_PRODUCTS_URL;
+      const username = localStorage.getItem("username");
+
+      if (!username) {
+        console.error("Username not found in localStorage.");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${API_URL}?product_comapany_name=eq.${username}`, {
+          headers: {
+            "apikey": import.meta.env.VITE_REACT_APP_ANON_KEY,
+            "Authorization": `Bearer ${import.meta.env.VITE_REACT_APP_ANON_KEY}`,
+          },
+        });
+
+        const data = response.data;
+        console.log('data',data);
+        const uniqueCategories = Array.from(
+          new Set(data.map((product: any) => (product.product_category || "")))
+        );
+        setCategories(["all", ...uniqueCategories]);
+        console.log('uniqueCategories',uniqueCategories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <div className="flex gap-4 justify-between">
-      <FilterButton
-        name="all"
-        Icon={AllIcon}
-        current={current}
-        setCurrent={setCurrent}
-      />
-      <FilterButton
-        name="burgers"
-        Icon={BurgerIcon}
-        current={current}
-        setCurrent={setCurrent}
-      />
-      <FilterButton
-        name="wraps"
-        Icon={WrapIcon}
-        current={current}
-        setCurrent={setCurrent}
-      />
-      <FilterButton
-        name="fries & sides"
-        Icon={FriesIcon}
-        current={current}
-        setCurrent={setCurrent}
-      />
-      <FilterButton
-        name="drinks"
-        Icon={DrinkIcon}
-        current={current}
-        setCurrent={setCurrent}
-      />
+      {categories.map((category) => (
+        <FilterButton
+          key={category}
+          name={category}
+          Icon={AllIcon} // Replace with dynamic icons if necessary
+          current={current}
+          setCurrent={setCurrent}
+        />
+      ))}
     </div>
   );
 };

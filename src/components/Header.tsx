@@ -6,6 +6,8 @@ import QRCode from "react-qr-code";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
+import axios from "axios";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 type HeaderProps = {
   cartItems: (foodDataType & { quantity: number })[];
@@ -32,6 +34,13 @@ export const Header: React.FC<HeaderProps> = ({
 
   const [companyLogo, setCompanyLogo] = useState("");
 
+  const [receiptData, setReceiptData] = useState({
+    phone_number: "",
+    address: "",
+    manager: "",
+    shop_name: "",
+  });
+
   useEffect(() => {
     const savedUsername = localStorage.getItem("username");
     if (savedUsername) {
@@ -46,6 +55,42 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const API_URL = import.meta.env.VITE_REACT_APP_LOGIN_URL;
+      try {
+        const response = await axios.get(
+          `${API_URL}?company_username=eq.${storedUsername}`,{
+            headers: {
+              "apikey": import.meta.env.VITE_REACT_APP_ANON_KEY,
+              "Authorization": `Bearer ${import.meta.env.VITE_REACT_APP_ANON_KEY}`,
+            },
+          }
+        );
+
+        console.log("API Response:", response.data); 
+        
+        const data = response.data[0]; // Assuming the API returns an array
+        setReceiptData({
+          phone_number: data?.phone_number || "N/A", 
+          address: data?.address || "Default Address",
+          manager: data?.manager || "Default Manager",
+          shop_name: data?.company_username || "Default Shop Name",
+        });
+      } catch (error) {
+        console.error("Error fetching receipt data:", error);
+        setReceiptData({
+          phone_number: "N/A",
+          address: "Default Address",
+          manager: "Default Manager",
+          shop_name: "Default Shop Name",
+        });
+      }
+    };
+
+    if (storedUsername) fetchData();
+  }, [storedUsername]);
+
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
   };
@@ -57,7 +102,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc, item) => acc + parseInt(item.product_selling_price) * item.quantity,
     0
   );
   const total = subtotal;
@@ -67,19 +112,9 @@ export const Header: React.FC<HeaderProps> = ({
     setIsCheckoutOpen(true); // Open the checkout modal
   };
 
-  const qrCodeData = JSON.stringify({
-    items: cartItems.map((item) => ({
-      name: item.name,
-      quantity: item.quantity,
-      price: item.price,
-    })),
-    total,
-    refNumber: "#KFC001",
-  });
-
   const generateRefNumber = () => {
     const randomNum = Math.floor(10 + Math.random() * 90); // Random number between 10 and 99
-    return `#KFC${randomNum}`;
+    return `#${randomNum}`;
   };
 
   const refNumber = generateRefNumber();
@@ -213,15 +248,13 @@ export const Header: React.FC<HeaderProps> = ({
                     className="flex justify-between items-center mb-4"
                   >
                     <img
-                      src={item.imageUrl}
-                      alt={item.name}
+                      src={`data:image/png;base64,${item.product_image}`}
+                      alt={item.product_name}
                       className="w-12 h-12 object-cover mr-2"
                     />
 
                     <div className="flex-1">
-                      <p className="font-semibold">{item.name}</p>
-
-                      <p className="text-sm">Delivery 24th July</p>
+                      <p className="font-semibold">{item.product_name}</p>
 
                       <div className="flex items-center mt-1">
                         <button
@@ -249,7 +282,8 @@ export const Header: React.FC<HeaderProps> = ({
 
                     <div className="flex items-center">
                       <p className="font-semibold mr-2">
-                        Rs {item.price * item.quantity}
+                        Rs{" "}
+                        {parseInt(item.product_selling_price) * item.quantity}
                       </p>
 
                       <button
@@ -292,17 +326,24 @@ export const Header: React.FC<HeaderProps> = ({
             <h2 className="font-bold text-lg uppercase mb-4 border-b-4 border-dotted pb-2">
               Receipt {refNumber}
             </h2>
+            <LazyLoadImage
+              src={`data:image/png;base64,${companyLogo}`}
+              alt={companyLogo}
+              effect="blur"
+              className="w-12 rounded-md object-cover"
+            />
             <div className="flex flex-col items-center text-center mb-4">
               <p className="text-sm">
-                Shop Name: <span>LE COIN MAURICIEN</span>
+                Shop Name: <span>{receiptData.shop_name}</span>
               </p>
               <p className="text-sm">
-                Address: <span>Mahebourg</span>
+                Address: <span>{receiptData.address}</span>
               </p>
-              <p className="text-sm">Manager: James Smith</p>
+              <p className="text-sm">Manager: {receiptData.manager}</p>
               <p className="text-sm">
                 Date: {new Date().toLocaleDateString("en-GB")}
               </p>
+              <p className="text-sm">Tel: {receiptData.phone_number}</p>
             </div>
 
             <div className="border-b-4 border-dotted pb-2 mb-4">
@@ -313,9 +354,11 @@ export const Header: React.FC<HeaderProps> = ({
               {cartItems.map((item, index) => (
                 <div key={index} className="flex justify-between text-sm">
                   <span>
-                    {item.name} (x{item.quantity})
+                    {item.product_name} (x{item.quantity})
                   </span>
-                  <span>Rs {item.price.toFixed(2)}</span>
+                  <span>
+                    Rs {parseInt(item.product_selling_price).toFixed(2)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -395,13 +438,6 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Rs {(moneyReceived - total).toFixed(2)}</span>
               </div>
             </div>
-
-            <div className="text-left mb-4 text-sm items-center text-center">
-              <p>Tel: +230 5918 2520</p>
-            </div>
-
-            <QRCode value={qrCodeData} size={100} className="mx-auto mb-4" />
-
             <p className="text-xs text-gray-600 ">THANK YOU FOR CHOOSING US!</p>
             <p className="text-xs text-gray-500 border-b-4 border-dotted">
               Your feedback keeps us improving!

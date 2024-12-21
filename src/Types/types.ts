@@ -9,9 +9,9 @@ export type CurrentSelectionProps = {
 
 export type foodDataType = {
   id: number;
-  name: string;
-  imageUrl: string;
-  category: string;
-  description: string;
-  price: number;
+  product_name: string;
+  product_selling_price: string;
+  product_image: string;
+  product_category: string;
+  product_description: string;
 };

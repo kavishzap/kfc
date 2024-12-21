@@ -6,27 +6,27 @@ import Swal from "sweetalert2"; // Import SweetAlert2
 
 type PropsType = {
   id: number;
-  name: string;
-  description: string;
-  imageUrl: string;
-  price: number;
-  category: string;
+  product_name: string;
+  product_description: string;
+  product_image: string;
+  product_selling_price: string;
+  product_category: string;
   setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
   onAddToCart: (item: foodDataType, quantity: number) => void;
 };
 
 export const Modal: FC<PropsType> = ({
   id,
-  name,
-  description,
-  imageUrl,
-  price,
-  category,
+  product_name,
+  product_description,
+  product_image,
+  product_selling_price,
+  product_category,
   setIsModal,
   onAddToCart,
 }) => {
   const [quantity, setQuantity] = useState(1);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State to handle confirmation modal
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const handleIncrement = () => setQuantity((prev) => prev + 1);
   const handleDecrement = () =>
@@ -37,15 +37,25 @@ export const Modal: FC<PropsType> = ({
   };
 
   const handleConfirm = () => {
-    onAddToCart({ id, name, description, imageUrl, price, category }, quantity);
+    onAddToCart(
+      {
+        id,
+        product_name,
+        product_description,
+        product_image,
+        product_selling_price,
+        product_category,
+      },
+      quantity
+    );
     setIsConfirmModalOpen(false);
     setIsModal(false); // Close main modal
     Swal.fire({
       title: "Selection Confirmed!",
-      text: `${quantity} ${name} added to your cart.`,
+      text: `${quantity} ${product_name} added to your cart.`,
       icon: "success",
       confirmButtonText: "OK",
-      confirmButtonColor: "#ff0000", // Optional customization
+      confirmButtonColor: "#ff0000",
     });
   };
 
@@ -68,7 +78,7 @@ export const Modal: FC<PropsType> = ({
           </button>
 
           <motion.img
-            src={imageUrl}
+            src={product_image}
             alt="food-image"
             className="w-64 mt-8"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -78,12 +88,12 @@ export const Modal: FC<PropsType> = ({
 
           <div className="flex flex-col gap-4 justify-center items-center">
             <div className="flex flex-col justify-center items-center gap-2">
-              <h1 className="font-bold text-2xl">{name}</h1>
+              <h1 className="font-bold text-2xl">{product_name}</h1>
               <p className="text-xl font-large text-black font-bold">
-                Rs {price.toFixed(2)}
+                Rs {product_selling_price}
               </p>
             </div>
-            <p className="text-center">{description}</p>
+            <p className="text-center">{product_description}</p>
 
             {/* Row with decrement, quantity, increment buttons */}
             <div className="flex items-center gap-4 mt-2 w-full justify-center">
@@ -121,7 +131,7 @@ export const Modal: FC<PropsType> = ({
           <div className="bg-white p-6 rounded-md shadow-md max-w-sm w-full">
             <h2 className="font-bold text-lg mb-4">Confirm Add to Cart</h2>
             <p>
-              Are you sure you want to add {quantity} {name} to your cart?
+              Are you sure you want to add {quantity} {product_name} to your cart?
             </p>
             <div className="flex justify-end gap-4 mt-4">
               <button
