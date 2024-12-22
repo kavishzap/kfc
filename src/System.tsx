@@ -118,12 +118,7 @@ function System() {
   };
 
   return (
-    <div
-      style={{
-        backgroundImage: "radial-gradient(circle, #000 -2px, transparent 2px)",
-        backgroundSize: "20px 20px", // Controls the spacing between dots
-      }}
-    >
+    <div>
       <header className="bg-white shadow-md">
         <Header
           cartItems={cartItems}
@@ -152,31 +147,32 @@ function System() {
         )}
         {!isLoading && (
           <>
-            {dataArray.length === 0 && (
-              <div className="flex flex-col gap-4 items-center justify-center my-8 min-h-[30vh]">
-                <div className="text-center text-md">
-                  No food is matched with the search keyword. Please try again.
-                </div>
+          {dataArray.length === 0 && (
+            <div className="flex flex-col gap-4 items-center justify-center my-8 min-h-[30vh]">
+              <div className="text-center text-md">
+                No products found. Please try again.
               </div>
-            )}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4  mt-4">
-              {dataArray.slice(0, maxDisplay).map((data) => (
-                <FoodCard
-                  key={data.id}
-                  {...data}
-                  onAddToCart={handleAddToCart} // Pass the add-to-cart function to FoodCard
-                />
-              ))}
             </div>
-            {isButton && (
-              <button
-                onClick={maxDisplayHandler}
-                className="bg-primary-color p-3 mb-10 w-full md:max-w-[350px] mx-auto font-light mt-16 rounded-md text-white"
-              >
-                Show more
-              </button>
-            )}
-          </>
+          )}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4 mb-5">
+            {dataArray.slice(0, maxDisplay).map((data) => (
+              <FoodCard
+                key={data.id}
+                {...data}
+                onAddToCart={handleAddToCart} // Pass the add-to-cart function to FoodCard
+              />
+            ))}
+          </div>
+          {isButton && (
+            <button
+              onClick={maxDisplayHandler}
+              className="bg-primary-color p-3 mb-10 w-full md:max-w-[350px] mx-auto font-light mt-16 rounded-md text-white"
+            >
+              Show more
+            </button>
+          )}
+        </>
+        
         )}
       </main>
       {isModalOpen && selectedFood && (

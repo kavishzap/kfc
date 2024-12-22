@@ -67,38 +67,38 @@ export const FoodCard: FC<FoodCardProps> = ({
           product_category={product_category}
         />
       )}
-      <div className="text-center bg-white shadow-md p-8 rounded-md group cursor-pointer hover:border-primary-color border border-white">
+      <div className="text-center bg-white shadow-md p-4 rounded-md group cursor-pointer hover:border-primary-color border border-white max-w-[200px]">
         <LazyLoadImage
-           src={`data:image/png;base64,${product_image}`}
+          src={`data:image/png;base64,${product_image}`}
           alt={product_name}
           effect="blur"
-          className="w-64 h-auto rounded-md object-cover"
+          className="w-32 h-32 rounded-md object-cover"
         />
-        <h2 className="font-bold group-hover:text-primary-color">
+        <h2 className="font-bold group-hover:text-primary-color text-sm mt-2">
           {product_name}
         </h2>
-        <p className="text-gray-700">
+        <p className="text-gray-700 text-sm">
           Rs {parseFloat(product_selling_price).toFixed(2)}
         </p>
 
-        <div className="flex items-center gap-4 mt-2 w-full justify-center">
+        <div className="flex items-center gap-2 mt-2 w-full justify-center">
           <button
             onClick={handleDecrement}
-            className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+            className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400 text-sm"
           >
             <FaMinus />
           </button>
-          <span className="text-lg font-medium">{quantity}</span>
+          <span className="text-sm font-medium">{quantity}</span>
           <button
             onClick={handleIncrement}
-            className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+            className="px-3 py-1 bg-gray-300 rounded-md hover:bg-gray-400 text-sm"
           >
             <FaPlus />
           </button>
         </div>
 
         <button
-          className="rounded-md text-white p-2 mt-2 border border-red-500 bg-primary-color hover:bg-red-500 hover:text-white transition-all mt-5"
+          className="rounded-md text-white px-3 py-1 mt-2 border border-red-500 bg-primary-color hover:bg-red-500 hover:text-white transition-all"
           onClick={handleConfirm}
         >
           Add

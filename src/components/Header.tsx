@@ -60,19 +60,22 @@ export const Header: React.FC<HeaderProps> = ({
       const API_URL = import.meta.env.VITE_REACT_APP_LOGIN_URL;
       try {
         const response = await axios.get(
-          `${API_URL}?company_username=eq.${storedUsername}`,{
+          `${API_URL}?company_username=eq.${storedUsername}`,
+          {
             headers: {
-              "apikey": import.meta.env.VITE_REACT_APP_ANON_KEY,
-              "Authorization": `Bearer ${import.meta.env.VITE_REACT_APP_ANON_KEY}`,
+              apikey: import.meta.env.VITE_REACT_APP_ANON_KEY,
+              Authorization: `Bearer ${
+                import.meta.env.VITE_REACT_APP_ANON_KEY
+              }`,
             },
           }
         );
 
-        console.log("API Response:", response.data); 
-        
+        console.log("API Response:", response.data);
+
         const data = response.data[0]; // Assuming the API returns an array
         setReceiptData({
-          phone_number: data?.phone_number || "N/A", 
+          phone_number: data?.phone_number || "N/A",
           address: data?.address || "Default Address",
           manager: data?.manager || "Default Manager",
           shop_name: data?.company_username || "Default Shop Name",
@@ -323,9 +326,6 @@ export const Header: React.FC<HeaderProps> = ({
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
           <div className="relative bg-white shadow-lg p-6 w-[90%] max-w-sm rounded-lg text-center border border-dashed border-gray-300">
-            <h2 className="font-bold text-lg uppercase mb-4 border-b-4 border-dotted pb-2">
-              Receipt {refNumber}
-            </h2>
             <LazyLoadImage
               src={`data:image/png;base64,${companyLogo}`}
               alt={companyLogo}
@@ -453,18 +453,61 @@ export const Header: React.FC<HeaderProps> = ({
                 {isPrintVisible && (
                   <button
                     className="bg-[#00ff00] rounded-md text-white p-3"
-                    onClick={() => {
-                      Swal.fire({
-                        title: "Receipt Printing",
-                        text: "Your receipt is being printed...",
-                        icon: "info",
-                        iconColor: "#ff0000",
-                        showConfirmButton: false,
-                        timer: 5000, // Auto-close after 2 seconds
-                      });
-                      cartItems.length = 0; // Clear all items in the cart
-                      setIsCheckoutOpen(false);
-                      // Clear cart function
+                    onClick={async () => {
+                      // Prepare data for the POST request
+                      const apiKey =
+                        import.meta.env.VITE_REACT_APP_ANON_KEY || "";
+                      const apiUrl =
+                        import.meta.env.VITE_REACT_APP_ORDERS_URL || "";
+
+                      const username =
+                        localStorage.getItem("username") || "Unknown User";
+                      const payload = {
+                        order_date: new Date().toISOString(), 
+                        order_total: total.toFixed(2), 
+                        order_company:username, 
+                        order_item: cartItems.map((item) => ({
+                          name: item.product_name,
+                          price: parseInt(item.product_selling_price),
+                          quantity: item.quantity,
+                          subtotal:
+                            parseInt(item.product_selling_price) *
+                            item.quantity,
+                        })), // List of items in the receipt
+                      };
+
+                      try {
+                        // Send the POST request
+                        await axios.post(apiUrl, payload, {
+                          headers: {
+                            apikey: apiKey,
+                            Authorization: `Bearer ${apiKey}`,
+                            "Content-Type": "application/json",
+                          },
+                        });
+
+                        // Show success notification
+                        Swal.fire({
+                          title: "Receipt Sent",
+                          text: "The receipt data has been sent successfully.",
+                          icon: "success",
+                          timer: 3000,
+                          showConfirmButton: false,
+                        });
+
+                        // Clear the cart and close the checkout modal
+                        cartItems.length = 0; // Clear all items in the cart
+                        setIsCheckoutOpen(false);
+                      } catch (error) {
+                        console.error("Error sending receipt data:", error);
+
+                        // Show error notification
+                        Swal.fire({
+                          title: "Error",
+                          text: "Failed to send the receipt data. Please try again.",
+                          icon: "error",
+                        });
+                      }
                     }}
                   >
                     Print

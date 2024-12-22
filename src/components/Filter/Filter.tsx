@@ -52,7 +52,6 @@ export const Filter: FC<CurrentSelectionProps> = ({ current, setCurrent }) => {
         <FilterButton
           key={category}
           name={category}
-          Icon={AllIcon} // Replace with dynamic icons if necessary
           current={current}
           setCurrent={setCurrent}
         />
