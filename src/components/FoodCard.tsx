@@ -17,6 +17,7 @@ export const FoodCard: FC<FoodCardProps> = ({
   product_description,
   product_selling_price,
   product_category,
+  product_manufucturing_price,
   onAddToCart,
 }) => {
   const [isModal, setIsModal] = useState(false);
@@ -39,6 +40,7 @@ export const FoodCard: FC<FoodCardProps> = ({
         product_description,
         product_category,
         product_selling_price,
+        product_manufucturing_price
       },
       quantity
     );

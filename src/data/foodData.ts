@@ -25,6 +25,8 @@ export const fetchFoodData = async (): Promise<foodDataType[]> => {
 
     const data = response.data;
 
+    console.log('data',data)
+
     return data.map((product: {
       id: number;
       product_name: string;
@@ -32,6 +34,7 @@ export const fetchFoodData = async (): Promise<foodDataType[]> => {
       product_image: string;
       product_category: string;
       product_description: string;
+      product_manufucturing_price: string
     }): foodDataType => ({
       id: product.id,
       product_name: product.product_name,
@@ -39,6 +42,7 @@ export const fetchFoodData = async (): Promise<foodDataType[]> => {
       product_image: product.product_image,
       product_category: product.product_category,
       product_description: product.product_description,
+      product_manufucturing_price: product.product_manufucturing_price
     }));
   } catch (error) {
     if (axios.isAxiosError(error)) {

@@ -462,10 +462,31 @@ export const Header: React.FC<HeaderProps> = ({
 
                       const username =
                         localStorage.getItem("username") || "Unknown User";
+
+                      const totalProfit = cartItems.reduce((total, item) => {
+                        const sellingPrice = parseInt(
+                          item.product_selling_price
+                        );
+                        const manufacturingPrice = parseInt(
+                          item.product_manufucturing_price
+                        );
+                        const quantity = item.quantity;
+
+                        console.log(sellingPrice);
+                        console.log(manufacturingPrice);
+                        console.log(quantity);
+
+                        const profit =
+                          (sellingPrice - manufacturingPrice) * quantity;
+                        return total + profit;
+                      }, 0);
+
+                      console.log('totalProfit',totalProfit);
+
                       const payload = {
-                        order_date: new Date().toISOString(), 
-                        order_total: total.toFixed(2), 
-                        order_company:username, 
+                        order_date: new Date().toISOString(),
+                        order_total: total.toFixed(2),
+                        order_company: username,
                         order_item: cartItems.map((item) => ({
                           name: item.product_name,
                           price: parseInt(item.product_selling_price),
@@ -474,6 +495,7 @@ export const Header: React.FC<HeaderProps> = ({
                             parseInt(item.product_selling_price) *
                             item.quantity,
                         })), // List of items in the receipt
+                        order_profit: totalProfit,
                       };
 
                       try {

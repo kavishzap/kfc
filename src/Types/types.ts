@@ -14,4 +14,5 @@ export type foodDataType = {
   product_image: string;
   product_category: string;
   product_description: string;
+  product_manufucturing_price: string
 };
