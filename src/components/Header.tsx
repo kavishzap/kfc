@@ -496,6 +496,7 @@ export const Header: React.FC<HeaderProps> = ({
                        }))
                      ),
                      order_profit: totalProfit,
+                     status: false
                    };
                
                    try {
