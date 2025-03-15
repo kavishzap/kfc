@@ -8,6 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
 import axios from "axios";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = import.meta.env.VITE_REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_REACT_APP_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 
 type HeaderProps = {
   cartItems: (foodDataType & { quantity: number })[];
@@ -451,89 +457,81 @@ export const Header: React.FC<HeaderProps> = ({
                   Cancel
                 </button>
                 {isPrintVisible && (
-                  <button
-                    className="bg-[#00ff00] rounded-md text-white p-3"
-                    onClick={async () => {
-                      // Prepare data for the POST request
-                      const apiKey =
-                        import.meta.env.VITE_REACT_APP_ANON_KEY || "";
-                      const apiUrl =
-                        import.meta.env.VITE_REACT_APP_ORDERS_URL || "";
-
-                      const username =
-                        localStorage.getItem("username") || "Unknown User";
-
-                      const totalProfit = cartItems.reduce((total, item) => {
-                        const sellingPrice = parseInt(
-                          item.product_selling_price
-                        );
-                        const manufacturingPrice = parseInt(
-                          item.product_manufucturing_price
-                        );
-                        const quantity = item.quantity;
-
-                        console.log(sellingPrice);
-                        console.log(manufacturingPrice);
-                        console.log(quantity);
-
-                        const profit =
-                          (sellingPrice - manufacturingPrice) * quantity;
-                        return total + profit;
-                      }, 0);
-
-                      console.log('totalProfit',totalProfit);
-
-                      const payload = {
-                        order_date: new Date().toISOString(),
-                        order_total: total.toFixed(2),
-                        order_company: username,
-                        order_item: cartItems.map((item) => ({
-                          name: item.product_name,
-                          price: parseInt(item.product_selling_price),
-                          quantity: item.quantity,
-                          subtotal:
-                            parseInt(item.product_selling_price) *
-                            item.quantity,
-                        })), // List of items in the receipt
-                        order_profit: totalProfit,
-                      };
-
-                      try {
-                        // Send the POST request
-                        await axios.post(apiUrl, payload, {
-                          headers: {
-                            apikey: apiKey,
-                            Authorization: `Bearer ${apiKey}`,
-                            "Content-Type": "application/json",
-                          },
-                        });
-
-                        // Show success notification
-                        Swal.fire({
-                          title: "Receipt Sent",
-                          text: "The receipt data has been sent successfully.",
-                          icon: "success",
-                          timer: 3000,
-                          showConfirmButton: false,
-                        });
-
-                        // Clear the cart and close the checkout modal
-                        cartItems.length = 0; // Clear all items in the cart
-                        setIsCheckoutOpen(false);
-                      } catch (error) {
-                        console.error("Error sending receipt data:", error);
-
-                        // Show error notification
-                        Swal.fire({
-                          title: "Error",
-                          text: "Failed to send the receipt data. Please try again.",
-                          icon: "error",
-                        });
-                      }
-                    }}
-                  >
-                    Print
-                  </button>
+                 <button
+                 className="bg-[#00ff00] rounded-md text-white p-3"
+                 onClick={async () => {
+                   // Get the authenticated user email
+                   const { data: authData, error: authError } = await supabase.auth.getUser();
+               
+                   if (authError || !authData?.user?.email) {
+                     console.error("User not authenticated:", authError);
+                     Swal.fire("Error", "You must be logged in to place an order.", "error");
+                     return;
+                   }
+               
+                   const userEmail = authData.user.email;
+               
+                   // Calculate total profit
+                   const totalProfit = cartItems.reduce((total, item) => {
+                     const sellingPrice = parseInt(item.product_selling_price);
+                     const manufacturingPrice = parseInt(item.product_manufucturing_price);
+                     const quantity = item.quantity;
+                     const profit = (sellingPrice - manufacturingPrice) * quantity;
+                     return total + profit;
+                   }, 0);
+               
+                   console.log("Total Profit:", totalProfit);
+               
+                   // Prepare order data
+                   const orderData = {
+                     order_date: new Date().toISOString(),
+                     order_total: total.toFixed(2),
+                     order_company_email: userEmail, // ✅ Link the order to the authenticated user
+                     order_items: JSON.stringify(
+                       cartItems.map((item) => ({
+                         name: item.product_name,
+                         price: parseInt(item.product_selling_price),
+                         quantity: item.quantity,
+                         subtotal: parseInt(item.product_selling_price) * item.quantity,
+                       }))
+                     ),
+                     order_profit: totalProfit,
+                   };
+               
+                   try {
+                     // ✅ Insert order into Supabase
+                     const { error } = await supabase.from("orders").insert([orderData]);
+               
+                     if (error) {
+                       throw new Error(error.message);
+                     }
+               
+                     // ✅ Success message
+                     Swal.fire({
+                       title: "Order Saved",
+                       text: "The order has been successfully placed.",
+                       icon: "success",
+                       timer: 3000,
+                       showConfirmButton: false,
+                     });
+               
+                     // ✅ Clear the cart and close the checkout modal
+                     cartItems.length = 0; // Clear all items in the cart
+                     setIsCheckoutOpen(false);
+                   } catch (error) {
+                     console.error("Error saving order:", error);
+               
+                     Swal.fire({
+                       title: "Error",
+                       text: "Failed to save the order. Please try again.",
+                       icon: "error",
+                     });
+                   }
+                 }}
+               >
+                 Print
+               </button>
+               
                 )}
               </div>
             </div>

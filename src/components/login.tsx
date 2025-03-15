@@ -2,83 +2,74 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from "axios";
+import { createClient } from "@supabase/supabase-js";
 import logo from "../assets/pos.png";
 
+// ✅ Initialize Supabase client
+const supabaseUrl = import.meta.env.VITE_REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_REACT_APP_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // ✅ Changed to email-based login
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_REACT_APP_LOGIN_URL;
-
   const handleLogin = async () => {
     setLoading(true);
     try {
-      console.log("url", `${API_URL}?company_username=eq.${username}`);
-      const response = await axios.get(
-        `${API_URL}?company_username=eq.${username}`,
-        {
-          headers: {
-            apikey: import.meta.env.VITE_REACT_APP_ANON_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_ANON_KEY}`,
-          },
+      // ✅ Authenticate using Supabase Auth
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+  
+      if (error) {
+        throw error; // ✅ Ensure error is thrown for handling
+      }
+  
+      // ✅ Fetch company details after successful login
+      const { user } = data;
+      if (user) {
+        const { data: companyData, error: companyError } = await supabase
+          .from("companies")
+          .select("company_logo, company_username")
+          .eq("company_email", email)
+          .single();
+  
+        if (companyError) {
+          console.error("Error fetching company details:", companyError);
+          Swal.fire("Error", "Could not load company details.", "error");
+          return;
         }
-      );
-
-      const data = response.data;
-
-      if (data.length > 0) {
-        const user = data[0];
-        if (user.company_password === password) {
-          localStorage.setItem("username", username);
-          localStorage.setItem("logo", user.company_logo);
-          console.log("Login successful for", username);
-          navigate("/system");
-        } else {
-          Swal.fire({
-            title: "Login Failed",
-            text: "Invalid Password",
-            icon: "error",
-            confirmButtonText: "Try Again",
-          });
-        }
-      } else {
-        Swal.fire({
-          title: "Login Failed",
-          text: "Username not found",
-          icon: "error",
-          confirmButtonText: "Try Again",
+  
+        // ✅ Store session and company details
+        localStorage.setItem("username", companyData.company_username);
+        localStorage.setItem("logo", companyData.company_logo);
+  
+        Swal.fire("Success", "Login successful!", "success").then(() => {
+          navigate("/system"); // ✅ Redirect to dashboard
         });
       }
-    } catch (error) {
-      console.error("Error during login:", error);
-      Swal.fire({
-        title: "Error",
-        text: "An error occurred while logging in. Please try again later.",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "An unknown error occurred"; // ✅ Safe error handling
+  
+      console.error("Login Error:", errorMessage);
+      Swal.fire("Login Failed", errorMessage, "error");
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <>
       <style>
         {`
-          html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden; 
-          }
-          #root {
-            height: 100%; 
-          }
+          html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+          #root { height: 100%; }
         `}
       </style>
       <div
@@ -98,17 +89,18 @@ const Login = () => {
             MINDKORE POS System
           </h2>
           <p className="text-sm text-gray-600 text-center">
-            Please login with your company information.
+            Please login with your company credentials.
           </p>
 
           <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
             <div className="relative">
               <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                placeholder="Company Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200 text-gray-700"
+                required
               />
             </div>
 
@@ -119,6 +111,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-200 text-gray-700"
+                required
               />
               <button
                 type="button"
@@ -131,19 +124,6 @@ const Login = () => {
                   <FaEye size={18} />
                 )}
               </button>
-            </div>
-
-            <div className="flex justify-between items-center text-xs">
-              <label className="flex items-center space-x-1">
-                <input
-                  type="checkbox"
-                  className="form-checkbox rounded text-blue-500 focus:ring focus:ring-blue-200"
-                />
-                <span>Remember Me</span>
-              </label>
-              <a href="#" className="text-red-500 hover:underline">
-                Forgot Password?
-              </a>
             </div>
 
             <button
